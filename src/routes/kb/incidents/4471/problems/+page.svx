@@ -29,13 +29,15 @@ its own, linked in the table.
 
 1. **Count each report once.** The ticket export comes in pages that overlap, so some reports
    appear twice. One id, one report.
-2. **Read what the report says.** Almost every body describes a day and a month that swapped
+2. **Let the tenant decide, not the subject or the tag.** Every tenant on file writes the day
+   first. A report that came in through booking-v3's own form is `hint`; every other report is
+   `parser` (the rule in `causes.ts`). This is the desk's own count, and the table uses it.
+3. **Read what the report says.** Almost every body describes a day and a month that swapped
    places: "booked 3 October, got an invite for 10 March". A few describe something else: a date
    that moved by one day, or one meeting that showed two different days in two time zones. The desk
-   already listed those in its notes as one-day moves. They are `shift`.
-3. **Let the tenant decide the swaps, not the subject or the tag.** Every tenant on file writes
-   the day first. A swap that came in through booking-v3's own form is `hint`; every other swap is
-   `parser` (the rule in `causes.ts`).
+   already listed those in its notes as one-day moves. They are `shift`, a problem of their own. As
+   the desk does with any report it reads differently from its cause, they stay counted where they
+   are filed, with a footnote.
 
 ## parser · the shared parser reads day-first dates month first
 

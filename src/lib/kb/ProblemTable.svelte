@@ -17,7 +17,8 @@
   const rows = (reports as Report[]).length;
   const merged = $derived(mergedInto(reports as Report[], ticket));
   const groups = $derived(groupByProblem(merged, tenantOf, notes.oneDayMove));
-  const placed = $derived(groups.reduce((n, g) => n + g.reports.length, 0));
+  // `shift` cuts across the causes, so only the filed causes add up to the ticket.
+  const placed = $derived(groups.filter((g) => g.problem !== 'shift').reduce((n, g) => n + g.reports.length, 0));
   const tally = (n: Record<string, number>) =>
     Object.entries(n)
       .sort((a, b) => b[1] - a[1])
@@ -32,7 +33,7 @@
 </p>
 <p class="check">
   The export holds {rows} rows; {rows - merged.length} repeat a report already counted (overlapping export pages).
-  {placed === merged.length ? `Every one of the ${merged.length} reports is in exactly one problem below.` : `${merged.length - placed} reports are in no problem: check problems.ts.`}
+  {placed === merged.length ? `Every one of the ${merged.length} reports is filed under exactly one cause, the desk's way (causes.ts).` : `${merged.length - placed} reports are filed under no cause: check problems.ts.`}
 </p>
 
 <table>
@@ -61,6 +62,15 @@
 </table>
 
 {#each groups as g (g.problem)}
+  {#if g.alsoShift}
+    <p class="note">
+      {g.alsoShift} of the <code>{g.problem}</code> reports read as a one-day move: counted under <code>{g.problem}</code>,
+      where the desk files them by tenant, and tracked as <code>shift</code>{issues.shift ? ` in #${issues.shift}` : ''}.
+    </p>
+  {/if}
+{/each}
+
+{#each groups as g (g.problem)}
   {#if g.reports.length <= listUpTo}
     <details open>
       <summary><code>{g.problem}</code>: all {g.reports.length} reports</summary>
@@ -75,7 +85,7 @@
 
 <style>
   .sum { font-size: 1.1rem; }
-  .check, .tags, .title, .seen { color: var(--muted); font-size: 0.85em; }
+  .check, .note, .tags, .title, .seen { color: var(--muted); font-size: 0.85em; }
   .n { font-weight: 600; }
   .seen { white-space: nowrap; }
   .none { color: var(--warn); font-weight: 600; }
