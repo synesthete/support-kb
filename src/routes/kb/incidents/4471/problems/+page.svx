@@ -4,7 +4,7 @@ title: '#4471 · three problems, not one'
 owner: Todd Thille
 status: open
 reviewed: 2026-11-10
-signature: Todd Thille
+signature: v1.eyJzdWIiOiIzNTk0IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQzMTE3MzgsImV4cCI6MTc5NDM5ODEzOH0.g6Fz9aranLA3MOB7xdiT9rrsNvtbBclorlCQDCoyztU
 ---
 
 <script>
