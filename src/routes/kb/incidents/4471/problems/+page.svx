@@ -1,0 +1,77 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Todd Thille
+status: open
+reviewed: 2026-11-10
+signature: Todd Thille
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. Read report by report, it
+holds three problems. The queued parser fix closes the first one only.
+
+<Callout kind="warn">
+#4471 is not one bug. Fixing the parser leaves the other two open. Each problem now has a ticket of
+its own, linked in the table.
+</Callout>
+
+## The problems in #4471
+
+<ProblemTable ticket={4471} repo="https://github.com/synesthete/support-kb" issues={{ parser: 1, hint: 2, shift: 3 }} />
+
+## How each report was placed
+
+1. **Count each report once.** The ticket export comes in pages that overlap, so some reports
+   appear twice. One id, one report.
+2. **Read what the report says.** Almost every body describes a day and a month that swapped
+   places: "booked 3 October, got an invite for 10 March". A few describe something else: a date
+   that moved by one day, or one meeting that showed two different days in two time zones. The desk
+   already listed those in its notes as one-day moves. They are `shift`.
+3. **Let the tenant decide the swaps, not the subject or the tag.** Every tenant on file writes
+   the day first. A swap that came in through booking-v3's own form is `hint`; every other swap is
+   `parser` (the rule in `causes.ts`).
+
+## parser · the shared parser reads day-first dates month first
+
+Every tenant writes dates day first. The shared parser reads every date month first, so a date like
+7/4 becomes 4 July instead of 7 April, and the booking lands in another month. This is what #4471 describes, and the queued fix is for it: read dates in the tenant's locale.
+
+## hint · booking-v3 prints an MM/DD hint to day-first tenants
+
+booking-v3 prints `MM/DD/YYYY` under its date field for every tenant. A day-first tenant's
+clients type the month first, as the hint tells them. The form then reads that field day first, the
+tenant's way, and the date swaps before it ever reaches the shared parser. The parser fix does not
+touch this. The fix is in the form: print the hint in the tenant's order (booking-v2 already prints
+`DD/MM/YYYY`), or replace the free-text field with a date picker.
+
+## shift · a date moves by one day with the time zone
+
+These reports name no swap. Tuesday shows as Monday; a client in Toronto sees Monday while a client
+in Lisbon sees Tuesday for the same meeting; an invite arrives before the booking was made. That
+looks like a date-only value stored as a moment in one time zone and shown in another. Neither the
+parser fix nor the hint fix changes it.
+
+## Why the desk saw one
+
+- **The subject cannot tell them apart.** The desk merges reports whose subject lines match
+  ([decision 0001](/kb/decisions/0001-dedupe-by-subject)). All three problems arrive under the same
+  subject lines ("Wrong day on the invite", "Date is wrong"), so all three were merged into one ticket.
+- **The intake tag is a guess.** Intake tags from the reporter's browser. The "tagged as" column
+  shows how often that guess disagrees with the cause.
+- **The page already showed it.** The #4471 page's own table lists `hint` as a second cause with
+  "no ticket of its own", and footnotes the one-day moves under `parser`. Its words still say one
+  issue.
+
+## What this page asks of the desk
+
+- Keep #4471 for `parser` only; `hint` and `shift` are tracked in their own tickets, linked above.
+- Decision 0001 is accepted, so it stays as written. Merging on cause instead of subject would be a
+  new decision record that replaces it; this page proposes it and does not write it.
+
+<RenderStamp {signature} />

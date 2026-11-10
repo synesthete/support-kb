@@ -31,6 +31,11 @@ src/lib/data/       exports from the ticket system
 
 Support desk. Decision records: whoever signed them.
 
+## Build
+
+`npm install`, then `npm run build` renders every page to `build/` (SvelteKit + mdsvex, static).
+`npm run dev` serves the kb at `/kb`. `rendered/` holds the page about #4471's problems as built.
+
 ---
 
 Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
